@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Color tokens — PRD §9.2 (warm paper, one accent) */
+  --paper: #faf7f2;
+  --surface: #ffffff;
+  --border: #ede7de;
+  --ink: #1a1712;
+  --ink-muted: #6b6257;
+  --accent: #e0701a;
+
+  --status-open: #6b6257;
+  --status-blocked: #b45309;
+  --status-resolved: #16a34a;
+  --status-contra: #dc2626;
+  --contra-tint: #fef2f2;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Editorial defaults */
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Animated accent underline on the primary button (PRD §9.3) */
+.accent-underline {
+  position: relative;
+}
+.accent-underline::after {
+  content: "";
+  position: absolute;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 0.55rem;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.accent-underline:hover::after,
+.accent-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Focus visibility for keyboard users (PRD §9.4) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

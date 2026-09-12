@@ -1,0 +1,87 @@
+# Signal
+
+**Signal finds the decision buried inside the noise — and catches when two channels disagree.**
+
+On any project, a single decision ("which marble for the master bathroom?") is scattered across six channels. Nobody is wrong, nothing is resolved, and two messages often **contradict each other** without anyone noticing — until it's built wrong. Signal reads the raw dump from every channel and tells you the one thing that matters: what's unresolved, why, who owns it, and where two people are talking past each other.
+
+> Built for the ArchScale Guild Intern Technology Hackathon 2026 (AS-02 — "Make project communication intelligent, not overwhelming"). Solo · 3-day build.
+
+## The concept
+
+Not a summarizer. Not a chatbot. A tool that produces one **Decision Card** per open decision, each showing its status, current state, blocker, owner, the detected contradiction, and the exact source messages it was assembled from.
+
+**Conflict detection across channels is the whole game.** Summarizers are a commodity; catching that "use the previous marble" (WhatsApp) and "refer Rev 04, the marble was updated" (Email) cannot both be true — before it gets installed wrong — is the point.
+
+## Architecture
+
+Single full-stack Next.js app. One repo, one deploy, no separate backend.
+
+```
+Browser (React UI)
+      │  POST /api/analyze  { raw: string }
+      ▼
+Next.js API route (serverless, Node runtime)
+      │  1. Extractor agent  → signals[]    (Gemini, JSON mode, temp 0.1)
+      │  2. Resolver agent   → decisions[]  (Gemini, JSON mode, temp 0.1)
+      │  3. Zod validation + one retry per stage on parse failure
+      │  4. Server-side sort: contradiction → blocked → open → resolved
+      ▼
+JSON { decisions[], signals[] }  →  render Decision Cards
+```
+
+**Two explicit LLM calls, not an agent framework.** For a live demo, determinism mattered more than framework features: two sequential, well-specified calls with forced JSON output are more robust and faster to debug than an orchestration graph, and the judge sees the output, not the DAG. Temperature 0.1 + a hardcoded sample project make the demo reproducible every run.
+
+The UI re-hydrates `source_signal_ids` and `contradiction.signal_ids` against the Stage-1 signals, so the raw evidence on screen is always the real extracted text — never re-generated.
+
+## Tech stack
+
+- **Next.js 14 (App Router) + React 18 + TypeScript**
+- **Tailwind CSS** with the design tokens mapped to CSS variables in `app/globals.css`
+- **`next/font/google`** — Fraunces (display) · Inter (UI) · JetBrains Mono (data)
+- **Google Gemini** (`gemini-2.5-flash`), JSON mode, temperature 0.1 — one dependency-free `fetch`, no SDK
+- **Zod** for response validation
+- **Vercel** for deploy
+
+## Run locally
+
+```bash
+npm install
+cp .env.local.example .env.local   # then paste your Gemini key
+npm run dev
+```
+
+Open http://localhost:3000 and click **Load sample project**.
+
+Get a Gemini API key at https://aistudio.google.com/apikey.
+
+### Environment variables
+
+| Variable | Required | Default | Notes |
+|---|---|---|---|
+| `GEMINI_API_KEY` | yes | — | Server-side only. Never committed (`.env.local` is gitignored). |
+| `GEMINI_MODEL` | no | `gemini-2.5-flash` | Override the model. |
+
+## Deploy (Vercel)
+
+1. Push this repo to GitHub.
+2. Import it in Vercel.
+3. Add `GEMINI_API_KEY` as an environment variable.
+4. Deploy. `main` auto-deploys on push.
+
+## API
+
+`POST /api/analyze`
+Request: `{ "raw": "<pasted text>" }`
+- `200` → `{ "decisions": Decision[], "signals": Signal[] }`
+- `422` → `{ "error": "Could not parse the messages. Try the sample project." }`
+- `500` → `{ "error": "Something broke on our side. Retry." }`
+
+## What AI helped with
+
+The extract→resolve pipeline is the product. Gemini does the two intelligence stages (normalising messy text into structured signals, then clustering them into decisions and detecting contradictions). All orchestration, validation, sorting, and UI are deterministic application code.
+
+## What I'd build next
+
+- Live channel integrations (WhatsApp/Gmail/drawings) instead of paste-in.
+- LangGraph orchestration once decisions branch into sub-decisions and need a real dependency graph.
+- Demo history via `localStorage`.
