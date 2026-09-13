@@ -24,7 +24,7 @@ export default function Landing() {
       </nav>
 
       <Canvas
-        camera={{ position: [0, 0, 12.5], fov: 42 }}
+        camera={{ position: [0, 0.3, 13.6], fov: 42 }}
         gl={{ alpha: true, antialias: true }}
         dpr={[1, 2]}
       >
@@ -34,10 +34,10 @@ export default function Landing() {
           <Scroll html style={{ width: "100%" }}>
             <Section index={0} align="left">
               <Eyebrow>Signal — for the project lead CC’d on everything</Eyebrow>
-              <h1 className="font-display text-[3rem] font-semibold leading-[1.03] tracking-[-0.02em] text-ink sm:text-[4.5rem]">
+              <h1 className="font-display text-[3.5rem] font-semibold leading-[1.02] tracking-[-0.02em] text-ink sm:text-[5.75rem]">
                 Find the decision<br />in the noise.
               </h1>
-              <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-ink-muted">
+              <p className="mt-5 max-w-[34ch] text-[1.1875rem] leading-relaxed text-ink-muted">
                 A single decision is scattered across six channels. Signal reads
                 the mess and tells you the one thing that matters.
               </p>
@@ -48,10 +48,10 @@ export default function Landing() {
 
             <Section index={1} align="right">
               <Eyebrow>The problem</Eyebrow>
-              <h2 className="font-display text-[2.25rem] font-semibold leading-[1.08] tracking-[-0.01em] text-ink sm:text-[3.25rem]">
+              <h2 className="font-display text-[2.75rem] font-semibold leading-[1.06] tracking-[-0.01em] text-ink sm:text-[4.25rem]">
                 Six channels.<br />Nobody’s wrong.<br />Nothing’s resolved.
               </h2>
-              <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-ink-muted">
+              <p className="mt-5 max-w-[34ch] text-[1.1875rem] leading-relaxed text-ink-muted">
                 WhatsApp, email, site notes, the client, the supplier, the
                 drawings — all talking past each other.
               </p>
@@ -59,11 +59,11 @@ export default function Landing() {
 
             <Section index={2} align="left">
               <Eyebrow style={{ color: "var(--status-contra)" }}>The catch</Eyebrow>
-              <h2 className="font-display text-[2.25rem] font-semibold leading-[1.08] tracking-[-0.01em] text-ink sm:text-[3.25rem]">
+              <h2 className="font-display text-[2.75rem] font-semibold leading-[1.06] tracking-[-0.01em] text-ink sm:text-[4.25rem]">
                 Two of them<br />
                 <span style={{ color: "var(--status-contra)" }}>contradict</span> each other.
               </h2>
-              <p className="mt-5 max-w-[36ch] font-mono text-[0.9rem] leading-relaxed text-ink">
+              <p className="mt-5 max-w-[38ch] font-mono text-[1.05rem] leading-relaxed text-ink">
                 “use the previous marble” vs “refer Rev 04 — the marble changed.”
                 They cannot both be true.
               </p>
@@ -71,10 +71,10 @@ export default function Landing() {
 
             <Section index={3} align="right">
               <Eyebrow>Why it matters</Eyebrow>
-              <h2 className="font-display text-[2.25rem] font-semibold leading-[1.08] tracking-[-0.01em] text-ink sm:text-[3.25rem]">
+              <h2 className="font-display text-[2.75rem] font-semibold leading-[1.06] tracking-[-0.01em] text-ink sm:text-[4.25rem]">
                 And no one notices —<br />until it’s built wrong.
               </h2>
-              <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-ink-muted">
+              <p className="mt-5 max-w-[34ch] text-[1.1875rem] leading-relaxed text-ink-muted">
                 Execution has no undo. The disagreement was always there, buried
                 in the thread.
               </p>
@@ -100,7 +100,7 @@ export default function Landing() {
             >
               <div>
                 <Eyebrow>The resolution</Eyebrow>
-                <h2 className="font-display text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.02em] text-ink sm:text-[3.25rem]">
+                <h2 className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.02em] text-ink sm:text-[4.25rem]">
                   One decision. Caught in time.
                 </h2>
               </div>
@@ -164,7 +164,7 @@ function Section({
         pointerEvents: "none",
       }}
     >
-      <div style={{ maxWidth: 560 }}>{children}</div>
+      <div style={{ maxWidth: 640 }}>{children}</div>
     </section>
   );
 }
