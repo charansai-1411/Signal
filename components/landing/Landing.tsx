@@ -1,15 +1,71 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
-import { ScrollControls, Scroll } from "@react-three/drei";
+import { useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { ScrollControls, Scroll, useScroll } from "@react-three/drei";
 import { Experience } from "./Experience";
 
 const bg =
   "radial-gradient(1200px 700px at 28% 18%, #fff7ec 0%, #faf7f2 42%, #f2e8d6 100%)";
 
 export default function Landing() {
+  const progressRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className="relative h-screen w-screen overflow-hidden" style={{ background: bg }}>
+      {/* Subtle scroll-progress rail (right edge, driven from scroll each frame) */}
+      <div
+        aria-hidden
+        style={{
+          position: "fixed",
+          right: "26px",
+          top: "50%",
+          transform: "translateY(-50%)",
+          height: "42vh",
+          width: "2px",
+          zIndex: 20,
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "color-mix(in srgb, var(--ink) 12%, transparent)",
+            borderRadius: "2px",
+          }}
+        />
+        <div
+          ref={progressRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "2px",
+            height: "100%",
+            background: "var(--accent)",
+            transformOrigin: "top",
+            transform: "scaleY(0)",
+            borderRadius: "2px",
+            boxShadow: "0 0 8px color-mix(in srgb, var(--accent) 55%, transparent)",
+          }}
+        />
+        {[0, 0.25, 0.5, 0.75, 1].map((p, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              top: `calc(${p * 100}% - 2px)`,
+              left: "-1px",
+              width: "4px",
+              height: "4px",
+              borderRadius: "9999px",
+              background: "color-mix(in srgb, var(--ink) 22%, transparent)",
+            }}
+          />
+        ))}
+      </div>
+
       {/* Fixed top bar (normal DOM, always clickable) */}
       <nav className="pointer-events-none fixed inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-5 sm:px-10">
         <span className="pointer-events-auto font-sans text-label font-semibold uppercase tracking-[0.18em] text-accent">
@@ -30,6 +86,7 @@ export default function Landing() {
       >
         <ScrollControls pages={5} damping={0.42}>
           <Experience />
+          <ScrollProgressDriver targetRef={progressRef} />
 
           <Scroll html style={{ width: "100%" }}>
             <Section index={0} align="left">
@@ -117,6 +174,21 @@ export default function Landing() {
       </Canvas>
     </div>
   );
+}
+
+/** Lives inside ScrollControls; writes scroll offset straight to the rail's
+ *  transform each frame (no React re-render). */
+function ScrollProgressDriver({
+  targetRef,
+}: {
+  targetRef: React.RefObject<HTMLDivElement>;
+}) {
+  const scroll = useScroll();
+  useFrame(() => {
+    const el = targetRef.current;
+    if (el) el.style.transform = `scaleY(${scroll.offset})`;
+  });
+  return null;
 }
 
 function Eyebrow({
