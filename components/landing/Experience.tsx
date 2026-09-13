@@ -54,64 +54,81 @@ export function Experience() {
     );
     cam.lookAt(0, 0.1, 0);
 
-    const converge = smoothstep(off, 0.6, 0.98);
-    const clash = smoothstep(off, 0.32, 0.46) * (1 - smoothstep(off, 0.58, 0.72));
-    const spin = t * 0.22 * converge; // the settled ring slowly orbits
+    // Phases, sequenced so they don't overlap into a jumble:
+    //   toClash  : scattered -> the two cards meet at centre (the contradiction)
+    //   fromClash: the pair leaves the clash and joins the ring (no bounce-back)
+    //   converge : the other cards settle into the ring
+    //   settled  : only once everything has arrived does the ring slowly orbit
+    const toClash = smoothstep(off, 0.30, 0.44);
+    const fromClash = smoothstep(off, 0.52, 0.9);
+    const converge = smoothstep(off, 0.56, 0.92);
+    const settled = smoothstep(off, 0.9, 1.0);
+    const spin = t * 0.08 * settled;
 
     SHARDS.forEach((s, i) => {
       const g = groups.current[i];
       const m = mats.current[i];
       if (!g || !m) return;
 
-      const drift = 1 - converge;
-      const dx = Math.sin(t * 0.55 + i * 1.7) * 0.24 * drift;
-      const dy = Math.cos(t * 0.45 + i * 1.1) * 0.22 * drift;
-      const dz = Math.sin(t * 0.4 + i * 0.7) * 0.16 * drift;
+      const isPair = s.pair !== undefined;
+      // How "resolved" this card is — its idle drift fades to zero as it settles.
+      const lock = isPair ? Math.max(toClash, fromClash) : converge;
+      const drift = 1 - lock;
 
-      const sx = s.scatter[0] * 1.18;
-      const sy = s.scatter[1] * 1.12;
+      const dx = Math.sin(t * 0.5 + i * 1.7) * 0.2 * drift;
+      const dy = Math.cos(t * 0.42 + i * 1.1) * 0.18 * drift;
+      const dz = Math.sin(t * 0.38 + i * 0.7) * 0.14 * drift;
+
+      // scattered origin (with idle drift baked in so it fades on convergence)
+      const sx = s.scatter[0] * 1.18 + dx;
+      const sy = s.scatter[1] * 1.12 + dy;
+      const sz = s.scatter[2] + dz;
+
       const ang = (i / N) * Math.PI * 2 - Math.PI / 2 + spin;
       const rx = Math.cos(ang) * 3.5;
       const ry = Math.sin(ang) * 2.05;
       const rz = Math.sin(ang) * 0.6;
 
-      let x = lerp(sx, rx, converge) + dx;
-      let y = lerp(sy, ry, converge) + dy;
-      let z = lerp(s.scatter[2], rz, converge) + dz;
-
-      if (s.pair !== undefined) {
+      let x: number, y: number, z: number;
+      if (isPair) {
         const cx = s.pair === 0 ? -1.05 : 1.05;
-        x = lerp(x, cx, clash);
-        y = lerp(y, 0.6, clash);
-        z = lerp(z, 1.5, clash);
+        // scatter -> clash (toClash), then clash -> ring (fromClash): one clean path.
+        x = lerp(lerp(sx, cx, toClash), rx, fromClash);
+        y = lerp(lerp(sy, 0.6, toClash), ry, fromClash);
+        z = lerp(lerp(sz, 1.5, toClash), rz, fromClash);
         m.emissive.copy(red);
-        m.emissiveIntensity = 0.12 + clash * 1.8;
+        m.emissiveIntensity = 0.12 + toClash * (1 - fromClash) * 1.9; // red peaks at clash, fades as it resolves
       } else {
+        x = lerp(sx, rx, converge);
+        y = lerp(sy, ry, converge);
+        z = lerp(sz, rz, converge);
         m.emissive.copy(tints[i]);
-        m.emissiveIntensity = 0.22 + converge * 0.12 - clash * 0.12 + Math.sin(t * 1.5 + i) * 0.05;
+        m.emissiveIntensity = 0.22 + converge * 0.12 + Math.sin(t * 1.4 + i) * 0.04;
       }
 
       g.position.set(x, y, z);
       g.scale.setScalar(intro);
-      g.rotation.z = Math.sin(t * 0.35 + i) * 0.07 * drift + clash * 0.13 * (s.pair === 0 ? 1 : -1);
-      g.rotation.x = -0.05 + Math.sin(t * 0.4 + i) * 0.035 * drift;
-      g.rotation.y = lerp(Math.sin(i) * 0.3, Math.sin(t * 0.3 + i) * 0.1, converge) + (1 - intro) * 3.2;
+      const tilt = isPair ? toClash * (1 - fromClash) * 0.1 * (s.pair === 0 ? 1 : -1) : 0;
+      g.rotation.z = Math.sin(t * 0.3 + i) * 0.045 * drift + tilt;
+      g.rotation.x = -0.05 + Math.sin(t * 0.35 + i) * 0.022 * drift;
+      g.rotation.y = lerp(Math.sin(i) * 0.28, 0, lock) + (1 - intro) * 3.2;
     });
 
     if (beam.current) {
       const bm = beam.current.material as THREE.MeshStandardMaterial;
-      bm.opacity = clash * 0.9;
-      beam.current.scale.x = 0.15 + clash * 1.0;
-      bm.emissiveIntensity = (0.6 + Math.sin(t * 9) * 0.25) * clash * 2.2;
+      const show = toClash * (1 - fromClash); // visible only while the pair is clashing
+      bm.opacity = show * 0.9;
+      beam.current.scale.x = 0.15 + show * 1.0;
+      bm.emissiveIntensity = (0.6 + Math.sin(t * 8) * 0.22) * show * 2.2;
     }
 
     if (decision.current && decisionMat.current) {
-      const ds = smoothstep(off, 0.68, 0.96);
+      const ds = smoothstep(off, 0.72, 0.97); // resolves in after the ring has formed
       decision.current.scale.setScalar(0.001 + ds);
-      decision.current.rotation.y = Math.sin(t * 0.5) * 0.22; // gentle face-wobble, stays readable
+      decision.current.rotation.y = Math.sin(t * 0.5) * 0.2; // gentle face-wobble, stays readable
       decision.current.rotation.z = Math.sin(t * 0.7) * 0.02;
-      decision.current.position.y = 0.15 + Math.sin(t * 0.9) * 0.07 * ds;
-      decisionMat.current.emissiveIntensity = ds * (0.55 + Math.sin(t * 2.4) * 0.16);
+      decision.current.position.y = 0.15 + Math.sin(t * 0.85) * 0.06 * ds;
+      decisionMat.current.emissiveIntensity = ds * (0.55 + Math.sin(t * 2.2) * 0.14);
     }
   });
 

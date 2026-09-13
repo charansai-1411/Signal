@@ -28,7 +28,7 @@ export default function Landing() {
         gl={{ alpha: true, antialias: true }}
         dpr={[1, 2]}
       >
-        <ScrollControls pages={5} damping={0.3}>
+        <ScrollControls pages={5} damping={0.42}>
           <Experience />
 
           <Scroll html style={{ width: "100%" }}>
