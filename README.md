@@ -38,7 +38,7 @@ The UI re-hydrates `source_signal_ids` and `contradiction.signal_ids` against th
 - **Next.js 14 (App Router) + React 18 + TypeScript**
 - **Tailwind CSS** with the design tokens mapped to CSS variables in `app/globals.css`
 - **`next/font/google`** — Fraunces (display) · Inter (UI) · JetBrains Mono (data)
-- **LLM via Groq** (default `qwen/qwen3.8-27b`, ~2–3s), with OpenRouter as a fallback provider — OpenAI-compatible JSON mode, temperature 0.1, one dependency-free `fetch`, no SDK
+- **LLM via Groq** (default `openai/gpt-oss-120b`, ~6–7s, chosen for free-tier rate-limit headroom), with **automatic fallback to OpenRouter** on rate limits — OpenAI-compatible JSON mode, temperature 0.1, one dependency-free `fetch`, no SDK
 - **Zod** for response validation
 - **Vercel** for deploy
 
@@ -61,7 +61,7 @@ The app picks its LLM provider from whichever key is set — **Groq preferred**,
 | Variable | Required | Default | Notes |
 |---|---|---|---|
 | `GROQ_API_KEY` | yes* | — | Preferred provider. Server-side only. Never committed (`.env.local` is gitignored). |
-| `GROQ_MODEL` | no | `qwen/qwen3.8-27b` | Override the Groq model. |
+| `GROQ_MODEL` | no | `openai/gpt-oss-120b` | Override the Groq model. |
 | `OPENROUTER_API_KEY` | yes* | — | Fallback provider (used only if `GROQ_API_KEY` is absent). |
 | `OPENROUTER_MODEL` | no | `nvidia/nemotron-3-super-120b-a12b:free` | Override the OpenRouter model. |
 | `UPSTASH_REDIS_REST_URL` | for rooms | — | Redis REST URL for the collaborative rooms feature. Without it, rooms fall back to an in-memory dev store (single process only — not viable on Vercel). |
