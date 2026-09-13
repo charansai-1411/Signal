@@ -60,12 +60,22 @@ Get a free OpenRouter API key at https://openrouter.ai/keys (no credit card requ
 |---|---|---|---|
 | `OPENROUTER_API_KEY` | yes | — | Server-side only. Never committed (`.env.local` is gitignored). |
 | `OPENROUTER_MODEL` | no | `nvidia/nemotron-3-super-120b-a12b:free` | Override the free model. |
+| `UPSTASH_REDIS_REST_URL` | for rooms | — | Redis REST URL for the collaborative rooms feature. Without it, rooms fall back to an in-memory dev store (single process only — not viable on Vercel). |
+| `UPSTASH_REDIS_REST_TOKEN` | for rooms | — | Redis REST token (pairs with the URL above). |
+
+### Rooms (collaborative feature)
+
+Beyond the single-screen paste flow, Signal supports **rooms**: create a room, share the 6-character code, and multiple people join (no login — just a display name) and each add what they know from their channel. **Analyse room** pools every contribution and runs the *same* extract→resolve pipeline, so the contradiction engine is unchanged — it just gets real multi-person input.
+
+- Storage: Upstash Redis (REST) when configured; an in-memory `globalThis` fallback for local dev.
+- Endpoints: `POST /api/rooms`, `GET /api/rooms/[code]`, `POST /api/rooms/[code]/contribute`, `POST /api/rooms/[code]/analyze`.
+- The room page live-syncs the feed via light polling.
 
 ## Deploy (Vercel)
 
 1. Push this repo to GitHub.
 2. Import it in Vercel.
-3. Add `OPENROUTER_API_KEY` (and optionally `OPENROUTER_MODEL`) as environment variables.
+3. Add `OPENROUTER_API_KEY` (and optionally `OPENROUTER_MODEL`) as environment variables. For the rooms feature, also add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (the in-memory fallback does not persist across serverless invocations).
 4. Deploy. `main` auto-deploys on push.
 
 ## API
