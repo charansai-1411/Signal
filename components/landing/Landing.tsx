@@ -52,8 +52,8 @@ export default function Landing() {
                 Six channels.<br />Nobody’s wrong.<br />Nothing’s resolved.
               </h2>
               <p className="mt-5 max-w-[34ch] text-[1.1875rem] leading-relaxed text-ink-muted">
-                WhatsApp, email, site notes, the client, the supplier, the
-                drawings — all talking past each other.
+                WhatsApp, email, Slack, the client, the calendar, the team — all
+                talking past each other.
               </p>
             </Section>
 
@@ -64,8 +64,8 @@ export default function Landing() {
                 <span style={{ color: "var(--status-contra)" }}>contradict</span> each other.
               </h2>
               <p className="mt-5 max-w-[38ch] font-mono text-[1.05rem] leading-relaxed text-ink">
-                “use the previous marble” vs “refer Rev 04 — the marble changed.”
-                They cannot both be true.
+                “keep the launch on Friday” vs “we moved it to Monday.” They
+                cannot both be true.
               </p>
             </Section>
 
@@ -101,7 +101,7 @@ export default function Landing() {
               <div>
                 <Eyebrow>The resolution</Eyebrow>
                 <h2 className="font-display text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.02em] text-ink sm:text-[4.25rem]">
-                  One decision. Caught in time.
+                  One decision.<br />Caught in time.
                 </h2>
               </div>
               <a

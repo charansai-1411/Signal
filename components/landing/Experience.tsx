@@ -16,14 +16,14 @@ type Shard = {
 };
 
 const SHARDS: Shard[] = [
-  { label: "WhatsApp", note: "use the previous marble", tint: "#1f9d55", scatter: [-3.6, 1.8, 0.4], pair: 0 },
-  { label: "Email", note: "refer Rev 04 — marble changed", tint: "#2563eb", scatter: [3.4, 2.0, -0.5], pair: 1 },
-  { label: "Site", note: "needs clarification", tint: "#e0701a", scatter: [-4.0, -1.4, -1.1] },
-  { label: "Client", note: "approved except bathroom", tint: "#7c3aed", scatter: [3.8, -1.6, 0.7] },
-  { label: "Supplier", note: "Shade 312 unavailable", tint: "#0d9488", scatter: [-1.9, 2.7, -1.7] },
-  { label: "Drawings", note: "Rev 05 uploaded", tint: "#64748b", scatter: [2.1, -2.7, -0.7] },
-  { label: "WhatsApp", note: "site photos attached", tint: "#1f9d55", scatter: [-2.5, 0.2, 1.7] },
-  { label: "Email", note: "PO approved", tint: "#2563eb", scatter: [2.7, 0.7, 1.3] },
+  { label: "WhatsApp", note: "let’s keep the launch on Friday", tint: "#1f9d55", scatter: [-3.6, 1.8, 0.4], pair: 0 },
+  { label: "Email", note: "we moved it to Monday — not Friday", tint: "#2563eb", scatter: [3.4, 2.0, -0.5], pair: 1 },
+  { label: "Slack", note: "designs are ready to ship", tint: "#7c3aed", scatter: [-4.0, -1.4, -1.1] },
+  { label: "Client", note: "approved — just confirm the date", tint: "#e0701a", scatter: [3.8, -1.6, 0.7] },
+  { label: "Calendar", note: "venue booked for the 14th", tint: "#0d9488", scatter: [-1.9, 2.7, -1.7] },
+  { label: "Team", note: "who’s telling the press?", tint: "#64748b", scatter: [2.1, -2.7, -0.7] },
+  { label: "WhatsApp", note: "can we finalise the date?", tint: "#1f9d55", scatter: [-2.5, 0.2, 1.7] },
+  { label: "Email", note: "budget signed off", tint: "#2563eb", scatter: [2.7, 0.7, 1.3] },
 ];
 
 const N = SHARDS.length;
@@ -163,11 +163,11 @@ export function Experience() {
         <Text position={[0, 0.58, 0.1]} fontSize={0.13} color="#ffffff" anchorX="center" anchorY="middle" letterSpacing={0.05}>
           ⚠ CONTRADICTION
         </Text>
-        <Text position={[0, 0.09, 0.1]} fontSize={0.22} maxWidth={2.4} textAlign="center" color="#1a1712" anchorX="center" anchorY="middle">
-          Master bathroom marble
+        <Text position={[0, 0.09, 0.1]} fontSize={0.24} maxWidth={2.4} textAlign="center" color="#1a1712" anchorX="center" anchorY="middle">
+          Launch date
         </Text>
         <Text position={[0, -0.37, 0.1]} fontSize={0.125} maxWidth={2.4} textAlign="center" color="#6b6257" anchorX="center" anchorY="middle">
-          reuse old vs. Rev 04 — cannot both be true
+          Friday vs Monday — can’t be both
         </Text>
       </group>
 
