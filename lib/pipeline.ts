@@ -14,6 +14,7 @@ import {
   type AnalyzeResponse,
 } from "@/lib/schema";
 import { sortDecisions } from "@/lib/sort";
+import { checkGrounding } from "@/lib/grounding";
 
 export const PARSE_ERROR = "Could not parse the messages. Try the sample project.";
 export const SERVER_ERROR = "Something broke on our side. Retry.";
@@ -80,13 +81,19 @@ export async function analyze(raw: string): Promise<AnalyzeResult> {
       RESOLVER_RETRY_SUFFIX,
     );
 
-    return {
-      ok: true,
-      data: {
-        decisions: sortDecisions(decisions as Decision[]),
-        signals: signals as Signal[],
-      },
+    const data = {
+      decisions: sortDecisions(decisions as Decision[]),
+      signals: signals as Signal[],
     };
+
+    // Grounding guardrail (observability): the UI only ever renders real
+    // extracted signals, but if the model drifts we want to know.
+    const grounding = checkGrounding(data, raw);
+    if (!grounding.ok) {
+      console.warn("[analyze] grounding violations:", grounding.violations);
+    }
+
+    return { ok: true, data };
   } catch (e) {
     if (e instanceof ParseFailure) {
       return { ok: false, status: 422, error: PARSE_ERROR };
