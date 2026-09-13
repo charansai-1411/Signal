@@ -142,7 +142,7 @@ export default function RoomPage({ params }: { params: { code: string } }) {
           No room with code <span className="font-mono">{code}</span>. It may have
           expired, or the code is off.
         </p>
-        <Link href="/" className="mt-4 inline-block font-sans font-semibold text-accent hover:underline">
+        <Link href="/dashboard" className="mt-4 inline-block font-sans font-semibold text-accent hover:underline">
           ← Back to Signal
         </Link>
       </main>
@@ -156,7 +156,7 @@ export default function RoomPage({ params }: { params: { code: string } }) {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link href="/" className="font-sans text-label font-semibold uppercase tracking-[0.14em] text-accent hover:underline">
+          <Link href="/dashboard" className="font-sans text-label font-semibold uppercase tracking-[0.14em] text-accent hover:underline">
             Signal
           </Link>
           <h1 className="mt-2 font-display text-h1 font-semibold leading-tight text-ink">

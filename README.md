@@ -33,9 +33,16 @@ JSON { decisions[], signals[] }  →  render Decision Cards
 
 The UI re-hydrates `source_signal_ids` and `contradiction.signal_ids` against the Stage-1 signals, so the raw evidence on screen is always the real extracted text — never re-generated.
 
+## Routes
+
+- **`/`** — a 3D scrollytelling landing (React Three Fiber): scattered channel messages → the two that contradict clash in red → everything converges into one Decision card. A **Go to Dashboard** button leads to the tool.
+- **`/dashboard`** — the working tool (paste flow + rooms).
+- **`/room/[code]`** — a collaborative room.
+
 ## Tech stack
 
 - **Next.js 14 (App Router) + React 18 + TypeScript**
+- **React Three Fiber + drei (three.js)** for the landing's 3D scene (lazy-loaded, client-only)
 - **Tailwind CSS** with the design tokens mapped to CSS variables in `app/globals.css`
 - **`next/font/google`** — Fraunces (display) · Inter (UI) · JetBrains Mono (data)
 - **LLM via Groq** (default `openai/gpt-oss-120b`, ~6–7s, chosen for free-tier rate-limit headroom), with **automatic fallback to OpenRouter** on rate limits — OpenAI-compatible JSON mode, temperature 0.1, one dependency-free `fetch`, no SDK
@@ -50,7 +57,7 @@ cp .env.local.example .env.local   # then paste your OpenRouter key
 npm run dev
 ```
 
-Open http://localhost:3000 and click **Load sample project**.
+Open http://localhost:3000 — a 3D scrollytelling landing. Click **Go to Dashboard** (→ `/dashboard`) to reach the tool, then **Load sample project**.
 
 Get a free Groq API key at https://console.groq.com/keys (no credit card required).
 
