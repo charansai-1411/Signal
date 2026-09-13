@@ -13,10 +13,15 @@ import { z } from "zod";
 export const CHANNELS = [
   "WhatsApp",
   "Email",
+  "Slack",
+  "SMS",
+  "Call",
   "Site",
   "Client",
   "Supplier",
+  "Team",
   "Drawings",
+  "Calendar",
   "Unknown",
 ] as const;
 

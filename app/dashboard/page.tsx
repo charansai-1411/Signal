@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { AnalyzeResponse } from "@/lib/schema";
-import { SAMPLE_PROJECT } from "@/lib/sample";
+import { SAMPLES } from "@/lib/sample";
 import { DecisionList } from "@/components/DecisionList";
 import { LoadingCards } from "@/components/LoadingCards";
 import { RoomsEntry } from "@/components/RoomsEntry";
@@ -16,6 +16,7 @@ type View =
 
 export default function Page() {
   const [raw, setRaw] = useState("");
+  const [sampleId, setSampleId] = useState(SAMPLES[0].id);
   const [view, setView] = useState<View>({ state: "empty" });
 
   async function analyze(text: string) {
@@ -46,8 +47,9 @@ export default function Page() {
   }
 
   function loadSample() {
-    setRaw(SAMPLE_PROJECT);
-    analyze(SAMPLE_PROJECT);
+    const s = SAMPLES.find((x) => x.id === sampleId) ?? SAMPLES[0];
+    setRaw(s.text);
+    analyze(s.text);
   }
 
   const isLoading = view.state === "loading";
@@ -84,7 +86,7 @@ export default function Page() {
           disabled={isLoading}
           rows={7}
           placeholder={
-            "Paste messages across channels, one per line. Optionally prefix each with a channel/sender, e.g.\nWhatsApp — Rakesh: use the previous marble\nEmail — Priya: refer Rev 04"
+            "Paste messages across channels, one per line. Optionally prefix each with a channel/sender, e.g.\nWhatsApp — Ravi: let's keep the launch on Friday\nEmail — Meera: we moved it to Monday"
           }
           className="w-full resize-y rounded-card border border-border bg-surface p-4 font-mono text-source leading-relaxed text-ink shadow-card outline-none transition-colors placeholder:text-[color-mix(in_srgb,var(--ink-muted)_70%,transparent)] focus:border-accent disabled:opacity-60"
         />
@@ -98,14 +100,32 @@ export default function Page() {
           >
             {isLoading ? "Analysing…" : "Analyse"}
           </button>
-          <button
-            type="button"
-            onClick={loadSample}
-            disabled={isLoading}
-            className="font-sans text-[0.9375rem] font-medium text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline disabled:opacity-40"
-          >
-            Load sample project
-          </button>
+          <div className="flex items-center gap-2">
+            <label htmlFor="sample" className="font-sans text-label font-medium uppercase tracking-[0.04em] text-ink-muted">
+              Sample
+            </label>
+            <select
+              id="sample"
+              value={sampleId}
+              onChange={(e) => setSampleId(e.target.value)}
+              disabled={isLoading}
+              className="rounded-lg border border-border bg-surface px-3 py-2 font-sans text-[0.875rem] text-ink outline-none transition-colors focus:border-accent disabled:opacity-40"
+            >
+              {SAMPLES.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={loadSample}
+              disabled={isLoading}
+              className="font-sans text-[0.9375rem] font-semibold text-accent underline-offset-4 transition-colors hover:underline disabled:opacity-40"
+            >
+              Load
+            </button>
+          </div>
         </div>
       </section>
 

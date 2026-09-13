@@ -10,10 +10,15 @@ import { LoadingCards } from "@/components/LoadingCards";
 const CHANNEL_OPTIONS = [
   "WhatsApp",
   "Email",
+  "Slack",
+  "SMS",
+  "Call",
   "Site",
   "Client",
   "Supplier",
+  "Team",
   "Drawings",
+  "Calendar",
   "Unknown",
 ] as const;
 

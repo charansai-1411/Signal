@@ -8,7 +8,7 @@ export const EXTRACTOR_SYSTEM = `You extract structured signals from messy proje
 
 Rules:
 - One signal per message. Preserve the original text verbatim in "raw_text".
-- "channel": one of WhatsApp | Email | Site | Client | Supplier | Drawings | Unknown. Infer from any prefix like "WhatsApp — ...". If none, use "Unknown".
+- "channel": one of WhatsApp | Email | Slack | SMS | Call | Site | Client | Supplier | Team | Drawings | Calendar | Unknown. Infer from any prefix like "WhatsApp — ...". If none, use "Unknown".
 - "sender_role": one of Architect | Client | Contractor | Supplier | Consultant | null. Infer from context (e.g. "architect" -> Architect, "site engineer"/"contractor" -> Contractor, a client name approving things -> Client, a supplier/vendor -> Supplier). If unknown, null.
 - "topic": a SHORT noun phrase naming what the message is about, e.g. "master bathroom marble". Normalize aggressively so that "the marble", "master bath marble", "bathroom stone", and "marble selection" all collapse to the SAME topic string. This topic is the join key used later, so be consistent.
 - "entities": concrete nouns/identifiers mentioned, e.g. ["marble", "Rev 04", "Shade 312", "master bathroom"].
