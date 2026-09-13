@@ -21,8 +21,8 @@ Browser (React UI)
       │  POST /api/analyze  { raw: string }
       ▼
 Next.js API route (serverless, Node runtime)
-      │  1. Extractor agent  → signals[]    (Gemini, JSON mode, temp 0.1)
-      │  2. Resolver agent   → decisions[]  (Gemini, JSON mode, temp 0.1)
+      │  1. Extractor agent  → signals[]    (LLM, forced JSON, temp 0.1)
+      │  2. Resolver agent   → decisions[]  (LLM, forced JSON, temp 0.1)
       │  3. Zod validation + one retry per stage on parse failure
       │  4. Server-side sort: contradiction → blocked → open → resolved
       ▼
@@ -38,7 +38,7 @@ The UI re-hydrates `source_signal_ids` and `contradiction.signal_ids` against th
 - **Next.js 14 (App Router) + React 18 + TypeScript**
 - **Tailwind CSS** with the design tokens mapped to CSS variables in `app/globals.css`
 - **`next/font/google`** — Fraunces (display) · Inter (UI) · JetBrains Mono (data)
-- **Google Gemini** (`gemini-2.5-flash`), JSON mode, temperature 0.1 — one dependency-free `fetch`, no SDK
+- **OpenRouter** free open-source model (`nvidia/nemotron-3-super-120b-a12b:free`), forced JSON, temperature 0.1 — one dependency-free `fetch`, no SDK
 - **Zod** for response validation
 - **Vercel** for deploy
 
@@ -46,26 +46,26 @@ The UI re-hydrates `source_signal_ids` and `contradiction.signal_ids` against th
 
 ```bash
 npm install
-cp .env.local.example .env.local   # then paste your Gemini key
+cp .env.local.example .env.local   # then paste your OpenRouter key
 npm run dev
 ```
 
 Open http://localhost:3000 and click **Load sample project**.
 
-Get a Gemini API key at https://aistudio.google.com/apikey.
+Get a free OpenRouter API key at https://openrouter.ai/keys (no credit card required).
 
 ### Environment variables
 
 | Variable | Required | Default | Notes |
 |---|---|---|---|
-| `GEMINI_API_KEY` | yes | — | Server-side only. Never committed (`.env.local` is gitignored). |
-| `GEMINI_MODEL` | no | `gemini-2.5-flash` | Override the model. |
+| `OPENROUTER_API_KEY` | yes | — | Server-side only. Never committed (`.env.local` is gitignored). |
+| `OPENROUTER_MODEL` | no | `nvidia/nemotron-3-super-120b-a12b:free` | Override the free model. |
 
 ## Deploy (Vercel)
 
 1. Push this repo to GitHub.
 2. Import it in Vercel.
-3. Add `GEMINI_API_KEY` as an environment variable.
+3. Add `OPENROUTER_API_KEY` (and optionally `OPENROUTER_MODEL`) as environment variables.
 4. Deploy. `main` auto-deploys on push.
 
 ## API
@@ -78,7 +78,7 @@ Request: `{ "raw": "<pasted text>" }`
 
 ## What AI helped with
 
-The extract→resolve pipeline is the product. Gemini does the two intelligence stages (normalising messy text into structured signals, then clustering them into decisions and detecting contradictions). All orchestration, validation, sorting, and UI are deterministic application code.
+The extract→resolve pipeline is the product. A free open-source LLM (via OpenRouter) does the two intelligence stages (normalising messy text into structured signals, then clustering them into decisions and detecting contradictions). All orchestration, validation, sorting, and UI are deterministic application code.
 
 ## What I'd build next
 

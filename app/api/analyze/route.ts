@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { callGeminiJSON, GeminiError } from "@/lib/gemini";
+import { callLLMJSON, LLMError } from "@/lib/llm";
 import {
   EXTRACTOR_SYSTEM,
   RESOLVER_SYSTEM,
@@ -31,7 +31,7 @@ async function runStage<T>(
   let lastErr: unknown;
   for (let attempt = 0; attempt < 2; attempt++) {
     const sys = attempt === 0 ? system : system + retrySuffix;
-    const raw = await callGeminiJSON(sys, user);
+    const raw = await callLLMJSON(sys, user);
     try {
       const parsed = JSON.parse(raw);
       return schema.parse(parsed);
@@ -93,9 +93,9 @@ export async function POST(req: Request) {
     if (e instanceof ParseFailure) {
       return NextResponse.json({ error: PARSE_ERROR }, { status: 422 });
     }
-    if (e instanceof GeminiError) {
+    if (e instanceof LLMError) {
       // Surface a clean message; log the detail server-side only.
-      console.error("[analyze] Gemini error:", e.message);
+      console.error("[analyze] LLM error:", e.message);
       return NextResponse.json({ error: SERVER_ERROR }, { status: 500 });
     }
     console.error("[analyze] Unexpected error:", e);
